@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dhizar Technology | Occipital Visual-Cortex Interface</title>
+    <meta name="description" content="Dhizar Technology is a hands-free Visual-Cortex Brain-Computer Interface (BCI) controller utilizing SSVEP frequency sync (8–20 Hz) at sub-50ms latency." />
+
+    <!-- Google Fonts Preconnect & Aerospace/Brutalist Editorial Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Geist+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- Immediate Theme Setup (Zero-Flicker on Refresh) -->
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('dhizar-theme');
+          if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="bg-[#6b8cc8] dark:bg-[#6b8cc8] text-[#F8FAFC] antialiased selection:bg-[#780606] selection:text-white">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
