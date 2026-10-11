@@ -148,8 +148,4 @@ export function ContactDock({
     </div>
   );
 }
-
-// Backward-compatible alias for existing imports
-export const SocialFlipButton = ContactDock;
-export const DHIZAR_CONTACT_ITEMS = contactKeys;
 export default ContactDock;
