@@ -5,12 +5,12 @@ export const TeamCareers = () => {
   return (
     <section
       id="team"
-      className="py-12 sm:py-20 lg:py-28 relative overflow-hidden bg-[#6b8cc8] text-[#0e1b33] w-full border-b border-[rgba(14,27,51,0.12)]"
+      className="relative min-h-[100dvh] w-full flex flex-col justify-center items-center bg-transparent px-4 sm:px-8 py-16 sm:py-24 text-white"
     >
-      <div className="max-w-[94vw] 2xl:max-w-[1700px] mx-auto px-4 sm:px-8 relative z-10">
+      <div className="max-w-[94vw] 2xl:max-w-[1700px] mx-auto px-2 sm:px-8 relative z-10 w-full">
         <TeamRevealGrid
           title="Small team, deeply focused."
-          description="Building the future of hands-free neural gaming input through focused, multidisciplinary execution."
+          description=""
           members={DHIZAR_TEAM_MEMBERS}
           autoPlay={false}
           defaultActiveMemberId={null}

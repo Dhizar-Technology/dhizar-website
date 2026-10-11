@@ -91,7 +91,7 @@ function initials(name: string) {
   return (parts[0]?.slice(0, 2) || "D").toUpperCase();
 }
 
-function Portrait({ member, active }: { member: TeamRevealMember; active: boolean }) {
+const Portrait = React.memo(function Portrait({ member, active }: { member: TeamRevealMember; active: boolean }) {
   const [imgError, setImgError] = useState(false);
   const style = {
     "--team-accent": member.accent ?? "#4cb3a6",
@@ -103,7 +103,7 @@ function Portrait({ member, active }: { member: TeamRevealMember; active: boolea
       className={cn(
         "relative h-full w-full overflow-hidden transition-colors duration-500",
         active &&
-          "bg-[color-mix(in_srgb,var(--team-accent)_10%,white)] dark:bg-[color-mix(in_srgb,var(--team-accent)_13%,#0a0a0a)]",
+        "bg-[color-mix(in_srgb,var(--team-accent)_10%,white)] dark:bg-[color-mix(in_srgb,var(--team-accent)_13%,#0a0a0a)]",
       )}
     >
       <div
@@ -125,7 +125,7 @@ function Portrait({ member, active }: { member: TeamRevealMember; active: boolea
           loading="lazy"
           onError={() => setImgError(true)}
           className={cn(
-            "absolute inset-0 h-full w-full object-cover transition-all duration-500 ease-out",
+            "absolute inset-0 w-full h-full object-cover object-top transition-all duration-500 ease-out",
             active
               ? "grayscale-0 scale-105 filter drop-shadow-md"
               : "grayscale contrast-125 opacity-70 scale-100",
@@ -163,7 +163,104 @@ function Portrait({ member, active }: { member: TeamRevealMember; active: boolea
       />
     </div>
   );
+});
+
+interface MemberPortraitCardProps {
+  member: TeamRevealMember;
+  active: boolean;
+  onSelect: (id: string | null) => void;
+  onInteractionChange: (interacting: boolean) => void;
+  defaultActiveMemberId: string | null;
 }
+
+const MemberPortraitCard = React.memo(function MemberPortraitCard({
+  member,
+  active,
+  onSelect,
+  onInteractionChange,
+  defaultActiveMemberId,
+}: MemberPortraitCardProps) {
+  const detailsId = `team-member-${member.id}-details`;
+
+  return (
+    <li className="w-full min-w-0 max-w-[240px] sm:max-w-[280px] lg:max-w-[320px] mx-auto flex justify-center">
+      <button
+        type="button"
+        aria-expanded={active}
+        aria-controls={detailsId}
+        aria-label={`View profile for ${member.name}, ${member.role}`}
+        onClick={() => onSelect(active ? null : member.id)}
+        onMouseEnter={() => {
+          onInteractionChange(true);
+          onSelect(member.id);
+        }}
+        onPointerEnter={(event) => {
+          if (event.pointerType === "mouse") {
+            onInteractionChange(true);
+            onSelect(member.id);
+          }
+        }}
+        onFocus={() => {
+          onInteractionChange(true);
+          onSelect(member.id);
+        }}
+        onBlur={() => {
+          onInteractionChange(false);
+          if (defaultActiveMemberId === null) {
+            onSelect(null);
+          }
+        }}
+        className="group block w-full min-w-0 max-w-[240px] sm:max-w-[280px] lg:max-w-[320px] mx-auto text-left rounded-[24px] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#070D18]"
+      >
+        <div
+          style={{ "--team-accent": member.accent ?? "#4cb3a6" } as React.CSSProperties}
+          className={cn(
+            "relative flex flex-col justify-between w-full min-w-0 max-w-[240px] sm:max-w-[280px] lg:max-w-[320px] mx-auto overflow-hidden rounded-[24px] shadow-lg p-4 sm:p-5 bg-[#0E1B33]/60 backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
+            active
+              ? "-translate-y-1.5 border border-[var(--team-accent)] shadow-[0_16px_36px_-12px_color-mix(in_srgb,var(--team-accent)_50%,transparent)] ring-1 ring-[var(--team-accent)]/50"
+              : "border border-white/10 hover:border-white/25",
+          )}
+        >
+          {/* Portrait Box */}
+          <div className="relative w-full aspect-[4/5] sm:aspect-square h-44 sm:h-52 lg:h-60 rounded-2xl overflow-hidden bg-[#e8eef9]">
+            <Portrait member={member} active={active} />
+
+            {/* Active card displays role expertise text smoothly overlaying the card */}
+            <div
+              id={detailsId}
+              className={cn(
+                "absolute inset-x-2 bottom-2 z-10 p-2.5 rounded-xl bg-black/80 backdrop-blur-md border border-white/15 transition-all duration-500 ease-out motion-reduce:transition-none",
+                active
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-3 opacity-0 pointer-events-none",
+              )}
+            >
+              <p className="line-clamp-3 text-[11px] leading-[1.4] text-white/95 font-sans font-normal">
+                {member.expertise}
+              </p>
+            </div>
+          </div>
+
+          {/* Name and Role text */}
+          <div className="px-1 text-center">
+            <h3 className="truncate text-base sm:text-lg font-semibold tracking-tight text-white mt-3.5">
+              {member.name}
+            </h3>
+            <p
+              className={cn(
+                "mt-0.5 truncate text-xs sm:text-sm transition-colors duration-300",
+                active ? "text-[var(--team-accent)] font-medium" : "text-[#8C9CAE]",
+              )}
+              style={{ "--team-accent": member.accent ?? "#4cb3a6" } as React.CSSProperties}
+            >
+              {member.role}
+            </p>
+          </div>
+        </div>
+      </button>
+    </li>
+  );
+});
 
 export function TeamRevealGrid({
   eyebrow = "TEAM & PARTNERSHIPS",
@@ -228,7 +325,7 @@ export function TeamRevealGrid({
   return (
     <div
       className={cn(
-        "relative w-full overflow-hidden bg-transparent text-[#0e1b33] transition-colors duration-300",
+        "relative w-full overflow-hidden bg-transparent text-white transition-colors duration-300",
         className,
       )}
       {...props}
@@ -243,14 +340,14 @@ export function TeamRevealGrid({
         }}
       />
 
-      <div className="relative mx-auto w-full max-w-6xl px-4 sm:px-8">
+      <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-8">
         <header className="mx-auto mb-6 sm:mb-8 max-w-xl text-center">
           {eyebrow ? (
             <p className="mb-3 inline-flex px-3 py-1 rounded-full bg-[#cddaf0] text-[11px] font-mono font-bold uppercase tracking-[0.24em] text-[#0e1b33]">
               {eyebrow}
             </p>
           ) : null}
-          <h2 className="text-balance text-3xl sm:text-4xl lg:text-5xl font-display font-bold tracking-tight text-[#0e1b33]">
+          <h2 className="text-balance text-[clamp(1.75rem,6vw,3rem)] sm:text-4xl lg:text-5xl font-display font-bold tracking-tight text-white">
             <span className="relative inline-block">
               <span className="relative z-10">{title}</span>
               <svg
@@ -300,7 +397,7 @@ export function TeamRevealGrid({
               </svg>
             </span>
           </h2>
-          <p className="mx-auto mt-6 max-w-xl text-pretty text-sm sm:text-base leading-relaxed text-[#1d2d4c]">
+          <p className="mx-auto mt-6 max-w-xl text-pretty text-sm sm:text-base leading-relaxed text-[#A9B7C6]">
             {description}
           </p>
         </header>
@@ -320,94 +417,18 @@ export function TeamRevealGrid({
               }
             }
           }}
-          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 items-start justify-center w-full"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 sm:gap-6 lg:gap-8 items-start justify-center w-full"
         >
-          {members.map((member) => {
-            const active = member.id === resolvedActiveId;
-            const detailsId = `team-member-${member.id}-details`;
-
-            return (
-              <li
-                key={member.id}
-                className="w-full max-w-[200px] lg:max-w-[220px] mx-auto flex justify-center"
-              >
-                <button
-                  type="button"
-                  aria-expanded={active}
-                  aria-controls={detailsId}
-                  onClick={() => selectMember(active ? null : member.id)}
-                  onMouseEnter={() => {
-                    setInteracting(true);
-                    selectMember(member.id);
-                  }}
-                  onPointerEnter={(event) => {
-                    if (event.pointerType === "mouse") {
-                      setInteracting(true);
-                      selectMember(member.id);
-                    }
-                  }}
-                  onFocus={() => {
-                    setInteracting(true);
-                    selectMember(member.id);
-                  }}
-                  onBlur={() => {
-                    setInteracting(false);
-                    if (defaultActiveMemberId === null) {
-                      selectMember(null);
-                    }
-                  }}
-                  className="group block w-full max-w-[200px] lg:max-w-[220px] mx-auto text-left outline-none cursor-pointer focus:outline-none"
-                >
-                  <div
-                    style={{ "--team-accent": member.accent ?? "#4cb3a6" } as React.CSSProperties}
-                    className={cn(
-                      "relative flex flex-col justify-between w-full max-w-[200px] lg:max-w-[220px] mx-auto aspect-[4/5] sm:aspect-[3/4] overflow-hidden rounded-[24px] border border-[rgba(255,255,255,0.4)] shadow-[0_12px_32px_rgba(14,27,51,0.08)] p-2.5 bg-white transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
-                      active
-                        ? "-translate-y-1.5 border-[var(--team-accent)] shadow-[0_16px_36px_-12px_color-mix(in_srgb,var(--team-accent)_50%,transparent)] ring-1 ring-[var(--team-accent)]/50"
-                        : "border-[#e2e8f0] hover:border-[#9fb7e0] shadow-[0_12px_32px_rgba(14,27,51,0.08)]",
-                      "focus-visible:ring-2 focus-visible:ring-[var(--team-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-white",
-                    )}
-                  >
-                    {/* Portrait Box */}
-                    <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-[#e8eef9]">
-                      <Portrait member={member} active={active} />
-
-                      {/* Active card displays role expertise text smoothly overlaying the card */}
-                      <div
-                        id={detailsId}
-                        className={cn(
-                          "absolute inset-x-2 bottom-2 z-10 p-2.5 rounded-xl bg-black/80 backdrop-blur-md border border-white/15 transition-all duration-500 ease-out motion-reduce:transition-none",
-                          active
-                            ? "translate-y-0 opacity-100"
-                            : "translate-y-3 opacity-0 pointer-events-none",
-                        )}
-                      >
-                        <p className="line-clamp-3 text-[11px] leading-[1.4] text-white/95 font-sans font-normal">
-                          {member.expertise}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Name and Role text */}
-                    <div className="px-1 pt-2 pb-0.5 text-center">
-                      <h3 className="truncate text-sm sm:text-base font-semibold tracking-tight text-[#0e1b33]">
-                        {member.name}
-                      </h3>
-                      <p
-                        className={cn(
-                          "mt-0.5 truncate text-xs font-mono transition-colors duration-300",
-                          active ? "text-[var(--team-accent)] font-medium" : "text-[#475569]",
-                        )}
-                        style={{ "--team-accent": member.accent ?? "#4cb3a6" } as React.CSSProperties}
-                      >
-                        {member.role}
-                      </p>
-                    </div>
-                  </div>
-                </button>
-              </li>
-            );
-          })}
+          {members.map((member) => (
+            <MemberPortraitCard
+              key={member.id}
+              member={member}
+              active={member.id === resolvedActiveId}
+              onSelect={selectMember}
+              onInteractionChange={setInteracting}
+              defaultActiveMemberId={defaultActiveMemberId}
+            />
+          ))}
         </ul>
 
         {children}

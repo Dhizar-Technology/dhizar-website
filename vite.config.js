@@ -14,15 +14,6 @@ export default defineConfig({
     open: false,
   },
   build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          animations: ['framer-motion'],
-          icons: ['react-icons'],
-        },
-      },
-    },
     chunkSizeWarningLimit: 800,
   },
 });

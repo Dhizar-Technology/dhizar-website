@@ -1,138 +1,220 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from "react";
+
+const NAV_ITEMS = [
+  { label: "Home", href: "#home", id: "home" },
+  { label: "About", href: "#about", id: "about" },
+  { label: "Team", href: "#team", id: "team" },
+  { label: "Contact", href: "#contact", id: "contact" },
+  { label: "FAQ", href: "#faq", id: "faq" },
+];
 
 export const Navbar = () => {
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
+  const toggleRef = useRef(null);
+  const closeBtnRef = useRef(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
+    const sectionIds = ["home", "about", "team", "contact", "faq"];
+    const handleIntersection = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    const observer = new IntersectionObserver(handleIntersection, {
+      rootMargin: "-40% 0px -55% 0px",
+      threshold: 0,
+    });
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) setMenuOpen(false);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const navLinks = [
-    { label: 'Home', href: '#hero' },
-    { label: 'Paradigm', href: '#paradigm' },
-    { label: 'Architecture', href: '#architecture' },
-    { label: 'Telemetry', href: '#specs' },
-    { label: 'Team', href: '#team' },
-    { label: 'Contact', href: '#contact' },
-  ];
-
-  const handleNavClick = (e, href) => {
-    e.preventDefault();
-    if (href === '#hero') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      closeBtnRef.current?.focus();
     } else {
-      const targetId = href.replace('#', '');
-      const el = document.getElementById(targetId);
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      document.body.style.overflow = "";
     }
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && isOpen) {
+        setIsOpen(false);
+        toggleRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    toggleRef.current?.focus();
   };
 
-  /* Header renders solid whenever it is scrolled OR the mobile drawer is open,
-     so the drawer always sits on a readable surface. */
-  const solid = scrolled || menuOpen;
+  const handleLinkClick = () => {
+    setIsOpen(false);
+    toggleRef.current?.focus();
+  };
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
-        solid
-          ? 'bg-[#0E1B33]/95 backdrop-blur-md border-b border-[#2a3e6b]/80 py-3 shadow-2xl'
-          : 'bg-transparent border-b border-transparent py-4'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between gap-4">
-        {/* Brand Logo / Wordmark → root route */}
-        <a
-          href="/"
-          aria-label="Dhizar — Home"
-          className="flex items-center gap-2.5 group shrink-0 focus:outline-none"
-        >
-          <img
-            src="/Dhizar.svg"
-            alt="Dhizar Logo"
-            className={`h-6 sm:h-7 w-auto object-contain select-none transition-all duration-300 ${solid ? 'brightness-0 invert' : ''}`}
-          />
-          <span className="flex flex-col">
-            <span
-              className={`font-display font-extrabold text-base sm:text-lg tracking-wider leading-none transition-colors group-hover:text-[#a71616] ${solid ? 'text-[#e8eef9]' : 'text-[#0e1b33]'}`}
-            >
-              DHIZAR
-            </span>
-            <span
-              className={`font-mono text-[9px] uppercase tracking-[0.22em] mt-1 font-medium transition-colors group-hover:text-[#a71616] ${solid ? 'text-[#94a3b8]' : 'text-[#1d2d4c]/70'}`}
-            >
-              Technology
-            </span>
-          </span>
-        </a>
+    <>
+      {/* Floating Pill Top Navigation Bar */}
+      <header
+        id="site-header"
+        className="fixed top-4 inset-x-0 z-50 flex justify-center px-4 sm:px-6 pointer-events-none"
+      >
+        <div className="pointer-events-auto w-full max-w-6xl h-14 sm:h-16 px-4 sm:px-8 rounded-full bg-[#070D18]/92 backdrop-blur-xl border border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.6)] flex items-center justify-between transition-all duration-300">
 
-        {/* Desktop Navigation Links */}
-        <nav
-          className={`hidden lg:flex items-center gap-6 text-xs sm:text-sm font-sans font-medium transition-colors ${solid ? 'text-[#94a3b8]' : 'text-[#1d2d4c]'}`}
-        >
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={(e) => handleNavClick(e, link.href)}
-              className={`transition-colors py-1 ${solid ? 'hover:text-[#e8eef9]' : 'hover:text-[#0e1b33]'}`}
+          {/* Left: Original Dhizar Brand Logo + Technology Subtext */}
+          <a
+            href="#home"
+            className="flex items-center gap-3 group focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#FFFFFF] rounded-lg"
+            aria-label="Dhizar Technology Home"
+          >
+            {/* Original Dhizar SVG Mark */}
+            <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-[#FFFFFF] shrink-0">
+              <img src="/assets/logo.svg" className="w-full h-full object-contain" alt="Dhizar" />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-display font-extrabold text-xl tracking-tight text-[#FFFFFF] leading-none">
+                DHIZAR
+              </span>
+              <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-[#A9B7C6] block mt-0.5">
+                TECHNOLOGY
+              </span>
+            </div>
+          </a>
+
+          {/* Center: Clean Text Navigation Links (Desktop) */}
+          <nav aria-label="Navigation menu" className="hidden lg:block">
+            <ul className="flex items-center gap-8">
+              {NAV_ITEMS.map((item) => (
+                <li key={item.id}>
+                  <a
+                    href={item.href}
+                    aria-current={activeSection === item.id ? "page" : undefined}
+                    className={`relative py-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-sm ${activeSection === item.id
+                        ? "text-[#FFFFFF]"
+                        : "text-[#8C9CAE] hover:text-[#FFFFFF]"
+                      }`}
+                  >
+                    {item.label}
+                    {activeSection === item.id && (
+                      <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-[1.5px] bg-white rounded-full" />
+                    )}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* Right Side: Clean and Uncluttered */}
+          <div className="flex items-center">
+            {/* Mobile Menu Toggle Button */}
+            <button
+              ref={toggleRef}
+              id="nav-toggle"
+              onClick={() => setIsOpen(true)}
+              className="lg:hidden grid h-10 w-10 place-items-center rounded-lg text-[#FFFFFF] hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+              aria-expanded={isOpen}
+              aria-controls="mobile-nav-drawer"
+              aria-label="Open menu"
             >
-              {link.label}
-            </a>
-          ))}
-        </nav>
-
-        {/* Mobile Menu Toggle (visible below lg) */}
-        <button
-          type="button"
-          onClick={() => setMenuOpen((open) => !open)}
-          aria-expanded={menuOpen}
-          aria-controls="mobile-nav"
-          aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-          className={`lg:hidden inline-flex items-center justify-center w-10 h-10 rounded-full border shrink-0 transition-colors ${
-            solid
-              ? 'border-[#2a3e6b] text-[#e8eef9] hover:bg-[#162443]'
-              : 'border-[#0e1b33]/20 text-[#0e1b33] hover:bg-white/60'
-          }`}
-        >
-          {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
-      </div>
-
-      {/* Mobile Drawer Navigation — no horizontal overflow, full-width panel */}
-      {menuOpen && (
-        <div id="mobile-nav" className="lg:hidden w-full overflow-hidden">
-          <nav className="max-w-7xl mx-auto px-4 sm:px-8 py-2 flex flex-col">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={(e) => {
-                  setMenuOpen(false);
-                  handleNavClick(e, link.href);
-                }}
-                className="py-3 text-sm font-sans font-medium text-[#e8eef9] hover:text-white border-b border-white/10 last:border-b-0 transition-colors"
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                aria-hidden="true"
               >
-                {link.label}
-              </a>
-            ))}
+                <line x1="4" y1="8" x2="20" y2="8" />
+                <line x1="4" y1="16" x2="20" y2="16" />
+              </svg>
+            </button>
+          </div>
+
+        </div>
+      </header>
+
+      {/* Mobile Drawer */}
+      <div
+        id="mobile-nav-drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu"
+        className={`fixed inset-0 z-[60] bg-[#070D18]/95 backdrop-blur-xl lg:hidden transition-transform duration-300 ease-out border-l border-[#415A77]/30 sm:rounded-l-2xl overflow-x-hidden ${isOpen ? "translate-x-0" : "translate-x-full pointer-events-none"
+          }`}
+        aria-hidden={!isOpen}
+      >
+        <div className="flex h-full flex-col px-6 pb-8 pt-4">
+          <div className="flex h-16 items-center justify-between border-b border-[#415A77]/30">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 flex items-center justify-center text-[#FFFFFF]">
+                <img src="/assets/logo.svg" className="w-full h-full object-contain" alt="Dhizar" />
+              </div>
+              <span className="font-display font-extrabold text-2xl tracking-tight text-[#FFFFFF]">
+                DHIZAR
+              </span>
+            </div>
+            <button
+              ref={closeBtnRef}
+              id="drawer-close"
+              onClick={handleClose}
+              aria-label="Close menu"
+              className="grid h-10 w-10 place-items-center rounded-lg text-[#FFFFFF] hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            >
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+          <nav aria-label="Mobile navigation">
+            <ul className="mt-8 flex flex-col gap-2">
+              {NAV_ITEMS.map((item) => (
+                <li key={item.id}>
+                  <a
+                    className={`block py-3 font-display text-3xl font-bold tracking-tight transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded-sm ${activeSection === item.id
+                        ? "text-[#FFFFFF]"
+                        : "text-[#8C9CAE] hover:text-[#FFFFFF]"
+                      }`}
+                    href={item.href}
+                    aria-current={activeSection === item.id ? "page" : undefined}
+                    onClick={handleLinkClick}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </nav>
         </div>
-      )}
-    </header>
+      </div>
+    </>
   );
 };
 
