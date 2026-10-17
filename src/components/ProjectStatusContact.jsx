@@ -7,7 +7,7 @@ export const ProjectStatusContact = () => {
       id="contact"
       className="relative min-h-[100dvh] w-full flex flex-col justify-center items-center bg-transparent px-4 sm:px-6 py-16 sm:py-20 text-white"
     >
-      <div className="relative z-10 max-w-5xl mx-auto bg-[#0E1B33]/60 backdrop-blur-md rounded-3xl sm:rounded-[36px] border border-white/15 text-white placeholder-[#8C9CAE] shadow-[0_20px_50px_rgba(0,0,0,0.30)] px-4 sm:px-8 py-10 sm:py-16 w-full">
+      <div className="relative z-10 max-w-5xl mx-auto bg-white/[0.03] backdrop-blur-md rounded-3xl sm:rounded-[36px] border border-white/10 text-white placeholder-[#8C9CAE] shadow-[0_4px_20px_rgba(0,0,0,0.25)] hover:border-cyan-500/30 transition-all duration-300 px-4 sm:px-8 py-10 sm:py-16 w-full">
         {/* Header text container */}
         <div className="text-center mb-8 sm:mb-10 relative z-10">
           <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[#8C9CAE] font-mono text-xs uppercase tracking-widest font-semibold mb-4">
@@ -51,7 +51,7 @@ export const ProjectStatusContact = () => {
 
           <a
             href="#team"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-white font-sans text-sm sm:text-base font-medium tracking-wide shadow-[0_12px_32px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#070D18]"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-cyan-500/30 text-white font-sans text-sm sm:text-base font-medium tracking-wide shadow-[0_12px_32px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#070D18]"
           >
             <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4cb3a6] opacity-60" />

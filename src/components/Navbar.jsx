@@ -74,7 +74,7 @@ export const Navbar = () => {
         id="site-header"
         className="fixed top-4 inset-x-0 z-50 flex justify-center px-4 sm:px-6 pointer-events-none"
       >
-        <div className="pointer-events-auto w-full max-w-6xl h-14 sm:h-16 px-4 sm:px-8 rounded-full bg-[#070D18]/92 backdrop-blur-xl border border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.6)] flex items-center justify-between transition-all duration-300">
+        <div className="pointer-events-auto w-full max-w-6xl h-14 sm:h-16 px-4 sm:px-8 rounded-full bg-white/[0.03] backdrop-blur-md border border-white/10 shadow-[0_4px_20px_rgba(0,0,0,0.25)] hover:border-cyan-500/30 flex items-center justify-between transition-all duration-300">
 
           {/* Left: Original Dhizar Brand Logo + Technology Subtext */}
           <a
@@ -156,12 +156,12 @@ export const Navbar = () => {
         role="dialog"
         aria-modal="true"
         aria-label="Menu"
-        className={`fixed inset-0 z-[60] bg-[#070D18]/95 backdrop-blur-xl lg:hidden transition-transform duration-300 ease-out border-l border-[#415A77]/30 sm:rounded-l-2xl overflow-x-hidden ${isOpen ? "translate-x-0" : "translate-x-full pointer-events-none"
+        className={`fixed inset-0 z-[60] bg-[#070D18]/95 backdrop-blur-md lg:hidden transition-transform duration-300 ease-out border-l border-white/10 sm:rounded-l-2xl overflow-x-hidden ${isOpen ? "translate-x-0" : "translate-x-full pointer-events-none"
           }`}
         aria-hidden={!isOpen}
       >
         <div className="flex h-full flex-col px-6 pb-8 pt-4">
-          <div className="flex h-16 items-center justify-between border-b border-[#415A77]/30">
+          <div className="flex h-16 items-center justify-between border-b border-white/10">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 flex items-center justify-center text-[#FFFFFF]">
                 <img src="/assets/logo.svg" className="w-full h-full object-contain" alt="Dhizar" />
